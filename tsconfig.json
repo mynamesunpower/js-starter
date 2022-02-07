@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "strict": true,
+    "target": "es5",
+    "module": "commonjs",
+    "alwaysStrict": true,
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    //"jsx": "preserve",
+    // "esModuleInterop": true,
+    "sourceMap": true,
+    "downlevelIteration": true
+    // "allowJs": true,
+    // "lib": [
+    //   "es6",
+    //   "dom"
+    // ],
+    // "rootDir": "src",
+    // "moduleResolution": "node"
+  }
+}

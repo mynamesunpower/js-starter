@@ -2,7 +2,6 @@ const container = document.getElementById('root');
 const ajax = new XMLHttpRequest();
 const NEWS_URL = 'https://api.hnpwa.com/v0/news/1.json';
 const CONTENT_URL = 'https://api.hnpwa.com/v0/item/@id.json';
-const { location } = window;
 const store = {
   currentPage: 1,
   feeds: [],
@@ -85,14 +84,14 @@ const newsFeed = () => {
   let next_page = store.currentPage + 1;
 
   template = template.replace('{{__news_feed__}}', newsList.join(''));
-  template = template.replace('{{__prev_page__}}', prev_page);
-  template = template.replace('{{__next_page__}}', next_page);
+  template = template.replace('{{__prev_page__}}', String(prev_page));
+  template = template.replace('{{__next_page__}}', String(next_page));
 
   container.innerHTML = template;
 };
 
 const newsDetail = () => {
-  const id = location.hash.substr(7);
+  const id = window.location.hash.substr(7);
   const newsContent = getData(CONTENT_URL.replace('@id', id));
   let template = `
     <div class="bg-gray-600 min-h-screen pb-8">
@@ -158,7 +157,7 @@ const newsDetail = () => {
 };
 
 const router = () => {
-  const routePath = location.hash;
+  const routePath = window.location.hash;
   console.log(routePath);
 
   if (routePath === '') {
