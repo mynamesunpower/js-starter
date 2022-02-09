@@ -36,12 +36,34 @@ const store: Store = {
   feeds: [],
 };
 
-const getData = <AjaxResponse>(url: string): AjaxResponse => {
-  ajax.open('GET', url, false);
-  ajax.send();
+class Api {
+  url: string;
+  ajax: XMLHttpRequest;
 
-  return JSON.parse(ajax.response);
-};
+  constructor(url: string) {
+    this.url = url;
+    this.ajax = new XMLHttpRequest();
+  }
+
+  protected getRequest<T>(): T {
+    this.ajax.open('GET', this.url, false);
+    this.ajax.send();
+
+    return JSON.parse(this.ajax.response);
+  }
+}
+
+class NewsFeedApi extends Api {
+  getData(): NewsFeed[] {
+    return this.getRequest<NewsFeed[]>();
+  }
+}
+
+class NewsDetailApi extends Api {
+  getData(): NewsDetail {
+    return this.getRequest<NewsDetail>();
+  }
+}
 
 const makeFeeds = (feeds: NewsFeed[]): NewsFeed[] => {
   for (let i = 0; i < feeds.length; i += 1) {
@@ -59,11 +81,12 @@ const updateView = (html: string): void => {
 };
 
 const newsFeed = (): void => {
+  const api = new NewsFeedApi(NEWS_URL);
   let newsFeed: NewsFeed[] = store.feeds;
   const newsList = [];
 
   if (newsFeed.length === 0) {
-    newsFeed = store.feeds = makeFeeds(getData<NewsFeed[]>(NEWS_URL));
+    newsFeed = store.feeds = makeFeeds(api.getData());
   }
 
   let template = `
@@ -130,7 +153,7 @@ const newsFeed = (): void => {
 const makeComment = (comments: NewsComment[]): string => {
   const commentString = [];
 
-  for (let i = 0; i < comments.length; i++) {
+  for (let i = 0; i < comments.length; i += 1) {
     const comment: NewsComment = comments[i];
     commentString.push(`
       <div style="padding-left: ${comment.level * 40}px;" class="mt-4">
@@ -150,8 +173,9 @@ const makeComment = (comments: NewsComment[]): string => {
 };
 
 const newsDetail = (): void => {
+  const api = new NewsDetailApi(CONTENT_URL.replace('@id', id));
   const id = window.location.hash.substr(7);
-  const newsContent = getData<NewsDetail>(CONTENT_URL.replace('@id', id));
+  const newsContent = api.getData();
   let template = `
     <div class="bg-gray-600 min-h-screen pb-8">
       <div class="bg-white text-xl">
